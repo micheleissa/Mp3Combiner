@@ -3,6 +3,7 @@ using System.Threading;
 
 namespace Mp3Combiner
 {
+    //Taken from https://stackoverflow.com/questions/1923323/console-animations
     public class Spinner : IDisposable
     {
         private const string Sequence = @"/-\|";
