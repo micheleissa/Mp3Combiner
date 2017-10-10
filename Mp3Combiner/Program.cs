@@ -1,6 +1,7 @@
 ﻿using NAudio.Wave;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Mp3Combiner
 {
@@ -16,7 +17,7 @@ namespace Mp3Combiner
                 {
                     spinner = new Spinner(0, lineIndex);
                     Console.Write("Enter the folder path, enter 'e' to exit, 'c' to clear the screen : ");
-                    var line = Console.ReadLine();
+                    var line = args?.Length > 0 ? args[0] : Console.ReadLine();
                     if (string.Equals(line, "e", StringComparison.CurrentCultureIgnoreCase))
                         break;
                     if (string.Equals(line, "c", StringComparison.CurrentCultureIgnoreCase))
@@ -28,12 +29,21 @@ namespace Mp3Combiner
                     if (!Directory.Exists(line))
                     {
                         Console.WriteLine("Path does not exist");
+                        args = null;
                         continue;
                     }
                     var files = Directory.GetFiles(line, "*.mp3");
+                    if (!files.Any())
+                    {
+                        Console.WriteLine("Path does not contain any .mp3 files.");
+                        args = null;
+                        continue;
+                    }
+
                     var resultFile = $@"{line}/Output/combined.mp3";
                     if (!Directory.Exists($@"{line}/Output"))
                         Directory.CreateDirectory($@"{line}/Output");
+
                     spinner.Start();
                     using (var fileStream = new FileStream(resultFile, FileMode.Create))
                     {
