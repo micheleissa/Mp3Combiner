@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,7 +11,7 @@ namespace Mp3Combiner
         static void Main(string[] args)
         {
             Spinner spinner = null;
-            var lineIndex = 2;
+            var lineIndex = 3;
             try
             {
                 while (true)
@@ -23,7 +24,7 @@ namespace Mp3Combiner
                     if (string.Equals(line, "c", StringComparison.CurrentCultureIgnoreCase))
                     {
                         Console.Clear();
-                        lineIndex = 2;
+                        lineIndex = 3;
                         continue;
                     }
                     if (!Directory.Exists(line))
@@ -49,6 +50,7 @@ namespace Mp3Combiner
                     {
                         Combine(files, fileStream);
                     }
+                    WriteMediaProperties(resultFile);
                     spinner.Stop();
                     Console.WriteLine("Done.");
                     lineIndex += 3;
@@ -57,14 +59,13 @@ namespace Mp3Combiner
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception has happened: {ex.Message}");
-                if (spinner != null)
-                    spinner.Stop();
+                spinner?.Stop();
             }
         }
 
         public static void Combine(string[] inputFiles, Stream output)
         {
-            foreach (var file in inputFiles)
+            foreach (var file in OrderFilesByMediaProperties(inputFiles))
             {
                 using (var reader = new Mp3FileReader(file))
                 {
@@ -80,6 +81,33 @@ namespace Mp3Combiner
                 }
 
             }
+        }
+
+        public static void WriteMediaProperties(string output)
+        {
+            var combined = TagLib.File.Create(output);
+            combined.Tag.Track = 0;
+            combined.Tag.Title = "Combined";
+            combined.Save();
+        }
+
+        public static List<string> OrderFilesByMediaProperties(string[] unorderedFiles)
+        {
+            var orderedList = new List<string>();
+            if (unorderedFiles == null || unorderedFiles.Length == 0)
+                return orderedList;
+            var tagFiles = unorderedFiles.Select(TagLib.File.Create).ToList();
+            if (tagFiles.All(tf => tf.Tag.Track != 0))
+            {
+                tagFiles = tagFiles.OrderBy(tf => tf.Tag.Track).ToList();
+                orderedList.AddRange(tagFiles.Select(tf => tf.Name));
+            }
+            else
+            {
+                tagFiles = tagFiles.OrderBy(tf => tf.Tag.Title).ToList();
+                orderedList.AddRange(tagFiles.Select(tf => tf.Name));
+            }
+            return orderedList;
         }
     }
 }
