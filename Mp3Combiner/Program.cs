@@ -11,7 +11,7 @@ namespace Mp3Combiner
         static void Main(string[] args)
         {
             Spinner spinner = null;
-            var lineIndex = 3;
+            var lineIndex = 0;
             try
             {
                 while (true)
@@ -24,7 +24,7 @@ namespace Mp3Combiner
                     if (string.Equals(line, "c", StringComparison.CurrentCultureIgnoreCase))
                     {
                         Console.Clear();
-                        lineIndex = 3;
+                        //lineIndex = 3;
                         continue;
                     }
                     if (!Directory.Exists(line))
@@ -41,10 +41,10 @@ namespace Mp3Combiner
                         continue;
                     }
 
-                    var resultFile = $@"{line}/Output/combined.mp3";
-                    if (!Directory.Exists($@"{line}/Output"))
-                        Directory.CreateDirectory($@"{line}/Output");
-
+                    var resultFile = Path.Combine(line,@"\Output\combined.mp3");
+                    if (!Directory.Exists(Path.Combine(line,@"\Output")))
+                        Directory.CreateDirectory(Path.Combine(line, @"\Output"));
+                    Console.Clear();
                     spinner.Start();
                     using (var fileStream = new FileStream(resultFile, FileMode.Create))
                     {
@@ -53,7 +53,10 @@ namespace Mp3Combiner
                     WriteMediaProperties(resultFile);
                     spinner.Stop();
                     Console.WriteLine("Done.");
-                    lineIndex += 3;
+                    Console.WriteLine("Combined file was saved in the following directory:");
+                    Console.WriteLine($"{resultFile}");
+                    
+//                    lineIndex += 3;
                 }
             }
             catch (Exception ex)
