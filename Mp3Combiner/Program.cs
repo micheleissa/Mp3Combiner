@@ -41,9 +41,9 @@ namespace Mp3Combiner
                         continue;
                     }
 
-                    var resultFile = Path.Combine(line,@"\Output\combined.mp3");
-                    if (!Directory.Exists(Path.Combine(line,@"\Output")))
-                        Directory.CreateDirectory(Path.Combine(line, @"\Output"));
+                    var resultFile = Path.Combine(line,@"Output\combined.mp3");
+                    if (!Directory.Exists(Path.Combine(line,"Output")))
+                        Directory.CreateDirectory(Path.Combine(line, "Output"));
                     Console.Clear();
                     spinner.Start();
                     using (var fileStream = new FileStream(resultFile, FileMode.Create))

@@ -7,4 +7,4 @@ Simple console app to combine disparate mp3 files into one. It is also smart abo
 
 # To Do:
 - Add support for named parameters.
-- Add some tests.
+- Add some tests. 
