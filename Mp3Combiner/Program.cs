@@ -40,9 +40,11 @@ namespace Mp3Combiner
                         args = null;
                         continue;
                     }
-
-                    var resultFile = Path.Combine(line,@"Output\combined.mp3");
-                    if (!Directory.Exists(Path.Combine(line,"Output")))
+                    Console.WriteLine("Enter a file name or 'Combined' will used if empty");
+                    var fileName = Console.ReadLine();
+                    fileName = string.IsNullOrWhiteSpace(fileName) ? "Combined" : fileName;
+                    var resultFile = Path.Combine(line, $@"Output\{fileName}.mp3");
+                    if (!Directory.Exists(Path.Combine(line, "Output")))
                         Directory.CreateDirectory(Path.Combine(line, "Output"));
                     Console.Clear();
                     spinner.Start();
@@ -55,8 +57,8 @@ namespace Mp3Combiner
                     Console.WriteLine("Done.");
                     Console.WriteLine("Combined file was saved in the following directory:");
                     Console.WriteLine($"{resultFile}");
-                    
-//                    lineIndex += 3;
+
+                    //                    lineIndex += 3;
                 }
             }
             catch (Exception ex)
